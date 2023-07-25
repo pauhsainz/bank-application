@@ -5,11 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.Scanner;
 
 @Entity
 public class Transaction {
@@ -22,21 +18,21 @@ public class Transaction {
 
     private Date date;
     //FROM
-    private String fromIBAN;
+    private String fromIban;
     //TO
-    private String toIBAN;
+    private String toIban;
 
     public Transaction(){};
-    public Transaction(BigDecimal amount, String category, Date date, String fromIBAN, String toIBAN) {
+    public Transaction(BigDecimal amount, String category, String fromIban, String toIban) {
         this.amount = amount;
         this.category = category;
         this.date = date;
-        this.fromIBAN = fromIBAN;
-        this.toIBAN = toIBAN;
+        this.fromIban = fromIban;
+        this.toIban = toIban;
     }
 
     public String toString() {
-        return String.format("%s: $%.2f (%s) [%s]", this.date, this.amount, this.category, this.fromIBAN, this.toIBAN);
+        return String.format("%s: $%.2f (%s) [%s]", this.date, this.amount, this.category, this.fromIban, this.toIban);
     }
 
 //    public static void main(String[] args) {
@@ -74,45 +70,6 @@ public class Transaction {
 //        return new Transaction(amount, category, date, fromIBAN, toIBAN);
 //    }
 
-    private static BigDecimal readBigDecimalInput(Scanner scanner) {
-        BigDecimal value = null;
-        boolean isValidInput = false;
-
-        while (!isValidInput) {
-            try {
-                String input = scanner.nextLine();
-                value = new BigDecimal(input);
-                isValidInput = true;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid decimal number.");
-            }
-        }
-
-        return value;
-    }
-
-    private static String readDateInput(Scanner scanner) {
-        String value = null;
-        boolean isValidInput = false;
-
-        while (!isValidInput) {
-            try {
-                String input = scanner.nextLine();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate.parse(input, formatter);
-                value = input;
-                isValidInput = true;
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
-            }
-        }
-
-        return value;
-    }
-
-    private static boolean checkAmountAgainstBalance(BigDecimal amount, BigDecimal balance) {
-        return amount.compareTo(balance) <= 0;
-    }
 
     public String getCategory() {
         return category;
@@ -146,19 +103,19 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getFromIBAN() {
-        return fromIBAN;
+    public String getFromIban() {
+        return fromIban;
     }
 
-    public void setFromIBAN(String fromIBAN) {
-        this.fromIBAN = fromIBAN;
+    public void setFromIban(String fromIBAN) {
+        this.fromIban = fromIBAN;
     }
 
-    public String getToIBAN() {
-        return toIBAN;
+    public String getToIban() {
+        return toIban;
     }
 
-    public void setToIBAN(String toIBAN) {
-        this.toIBAN = toIBAN;
+    public void setToIban(String toIBAN) {
+        this.toIban = toIBAN;
     }
 }

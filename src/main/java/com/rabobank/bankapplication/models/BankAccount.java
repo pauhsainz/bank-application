@@ -1,57 +1,53 @@
 package com.rabobank.bankapplication.models;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
-import java.util.Scanner;
+import com.rabobank.bankapplication.utils.IBANUtil;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
 @Entity
 public class BankAccount {
     private String firstName;
     private String lastName;
-    @Id
+
     private String username;
+    //Checker for valid -- not too long, no spaces, no weird characters (NO weird UTF-8) (ONLY a-z, caps, 0-9, _=? [chars on keyboard] etc)
     private BigDecimal balance;
-
-    public BankAccount() {
-
-    }
-
-    public String getSelfIBAN() {
-        return selfIBAN;
-    }
-
-    public void setSelfIBAN(String selfIBAN) {
-        this.selfIBAN = selfIBAN;
-    }
-
-    public String selfIBAN;
+    @Id
+    public String selfIban;
     //IBAN CHECK
+        //CREATE UTIL CLASS (IBAN GENERATOR / VALIDATOR)
+        //quick & dirty instant call -- READMORE
+            //singleton -- look into (not nesc. use it but, do learn about it)
+        //implementation to experiment with
     //TEST CASES!!!!
 
-    public BankAccount(String firstName, String lastName, String username, BigDecimal balance, String selfIBAN) {
+    public BankAccount(String firstName, String lastName, String username, BigDecimal balance) {
+
+    }
+
+    public BankAccount(String firstName, String lastName, String username, BigDecimal balance, String selfIban) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.balance = balance;
-        this.selfIBAN=selfIBAN;
+        this.selfIban = IBANUtil.generateIBAN();
     }
 
     public void deposit(BigDecimal amount, String category, String selfIBAN) {
-        addToBalance(amount);
-        addTransaction(amount, category, selfIBAN);
+        this.balance = this.balance.add(amount);
     }
 
-    public void withdraw(BigDecimal amount, String category) {
+    public void withdraw(BigDecimal amount, String category, String selfIBAN) {
         if (isBalanceSufficient(amount)) {
-            subtractFromBalance(amount);
-            addTransaction(amount, "Withdrawal", category);
+            this.balance = this.balance.subtract(amount);
         } else {
             System.out.println("Insufficient balance");
         }
     }
+
+
 
     public void transfer(BankAccount otherAccount, BigDecimal amount, String category) {
         if (isBalanceSufficient(amount)) {
@@ -79,29 +75,10 @@ public class BankAccount {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setCategory(category);
-        transaction.setFromIBAN(selfIBAN);
+        transaction.setFromIban(selfIBAN);
 
     }
 
-//    public static BankAccount generateSampleBankAccount() {
-//    }
-
-//    public static BankAccount createBankAccountFromUserInput() {
-//        Scanner scanner = new Scanner(System.in);
-//
-//        System.out.print("Enter first name: ");
-//        String firstName = scanner.nextLine();
-//
-//        System.out.print("Enter last name: ");
-//        String lastName = scanner.nextLine();
-//
-//        System.out.print("Enter username: ");
-//        String username = scanner.nextLine();
-//
-//        BigDecimal balance = readBigDecimalInput("Enter initial balance: ");
-//
-//        return new BankAccount(firstName, lastName, username, balance);
-//    }
 
     private static BigDecimal readBigDecimalInput(String prompt) {
         Scanner scanner = new Scanner(System.in);
@@ -120,17 +97,7 @@ public class BankAccount {
 
         return value;
     }
-//    public static void main(String[] args) {
-//        BankAccount sampleAccount = generateSampleBankAccount();
-//        System.out.println("Sample Bank Account:");
-//        System.out.println("Username: " + sampleAccount.username);
-//        System.out.println("Balance: " + sampleAccount.balance);
-//
-//        BankAccount newAccount = createBankAccountFromUserInput();
-//        System.out.println("New Bank Account:");
-//        System.out.println("Username: " + newAccount.username);
-//        System.out.println("Balance: " + newAccount.balance);
-//    }
+
 
     public String getFirstName() {
         return firstName;
@@ -164,5 +131,15 @@ public class BankAccount {
         this.balance = balance;
     }
 
+    public void transfer(Transaction transaction, BankAccount bankAccount) {
+    }
+    public String getSelfIban() {
+        return selfIban;
+    }
+
+    // Make the setter for selfIban private to prevent modification after it's set during object creation.
+    private void setSelfIban(String selfIban) {
+        this.selfIban = selfIban;
+    }
 }
 
