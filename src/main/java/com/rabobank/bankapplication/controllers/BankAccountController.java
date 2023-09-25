@@ -2,14 +2,19 @@ package com.rabobank.bankapplication.controllers;
 
 
 import com.rabobank.bankapplication.models.BankAccount;
+import com.rabobank.bankapplication.models.User;
 import com.rabobank.bankapplication.repositories.BankAccountRepository;
+import com.rabobank.bankapplication.utils.IBANUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api")
 public class BankAccountController {
 
     private final BankAccountRepository bankAccountRepository;
@@ -19,23 +24,23 @@ public class BankAccountController {
         this.bankAccountRepository = bankAccountRepository;
     }
 
-    public BankAccount createBankAccount(String firstName, String lastName, String username, BigDecimal balance) {
-        BankAccount bankAccount = new BankAccount(firstName, lastName, username, balance);
+    @PostMapping("/bank-accounts")
+    public BankAccount createBankAccount(User user, long balance, String iban) {
+        BankAccount bankAccount = new BankAccount(user, balance, iban);
         return bankAccountRepository.save(bankAccount);
     }
-    public BankAccount getBankAccountByselfIban(String selfIban) {
-        return bankAccountRepository.findById(selfIban).orElseThrow(()->new RuntimeException("No IBAN found, try again"));
+
+    @GetMapping("/bank-accounts")
+    public List<BankAccount> getAllBankAccounts() {
+        return bankAccountRepository.findAll();
     }
+    //TODO get all Bank Accounts
 
     public BankAccount updateBankAccount(BankAccount bankAccount) {
         return bankAccountRepository.save(bankAccount);
     }
-    //Not update bankAccount, instead the list of associated transactions --> calculate balance on the fly from retrieved transactions
-    //update their last-name
-    //Create user object, makes use of BA and needs to be retrieved based on username (which is associated with a set of IBAN, which is assc. with transactions)
+    //TODO Not update bankAccount, instead the list of associated transactions --> calculate balance on the fly from retrieved transactions
+    //TODO update their last-name
+    //TODO Create user object, makes use of BA and needs to be retrieved based on username (which is associated with a set of IBAN, which is assc. with transactions)
 
-    // Get all Bank Accounts
-    public List<BankAccount> getAllBankAccounts() {
-        return bankAccountRepository.findAll();
-    }
 }

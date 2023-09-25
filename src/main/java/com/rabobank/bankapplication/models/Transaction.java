@@ -1,98 +1,56 @@
 package com.rabobank.bankapplication.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-
-import java.math.BigDecimal;
+import com.rabobank.bankapplication.services.SortingService;
+import jakarta.persistence.*;
 import java.util.Date;
+import static com.rabobank.bankapplication.services.SortingService.Category.*;
+
 
 @Entity
 public class Transaction {
-    private BigDecimal amount;
+    private long amount;
 
     @Id
     @GeneratedValue
     private Long id;
     private String category;
-
     private Date date;
-    //FROM
+    @ManyToOne
+    @JoinColumn(name = "from_bank_account_id")
+    private BankAccount from;
+    @ManyToOne
+    @JoinColumn(name = "to_bank_account_id")
+    private BankAccount to;
     private String fromIban;
-    //TO
+
     private String toIban;
 
-    public Transaction(){};
-    public Transaction(BigDecimal amount, String category, String fromIban, String toIban) {
+    public Transaction() {
+        this.date = new Date();
+    }
+
+    public Transaction(long amount, String category, String fromIban, String toIban) {
         this.amount = amount;
         this.category = category;
-        this.date = date;
+        this.date = new Date();
         this.fromIban = fromIban;
         this.toIban = toIban;
     }
-
-    public String toString() {
-        return String.format("%s: $%.2f (%s) [%s]", this.date, this.amount, this.category, this.fromIban, this.toIban);
-    }
-
-//    public static void main(String[] args) {
-//        // Create a sample transaction
-//        Transaction transaction = createTransactionFromUserInput();
-//        System.out.println("Transaction Details:");
-//        System.out.println(transaction.toString());
-//
-//        // Check if the amount is less than the balance
-//        BigDecimal balance = new BigDecimal("1000"); // Assuming the balance is 1000 for demonstration purposes
-//        boolean isAmountValid = checkAmountAgainstBalance(transaction.getAmount(), balance);
-//        if (!isAmountValid) {
-//            System.out.println("Amount exceeds the balance.");
-//        }
-//    }
-
-//    public static Transaction createTransactionFromUserInput() {
-//        Scanner scanner = new Scanner(System.in);
-//
-//        System.out.print("Enter the transaction amount: ");
-//        BigDecimal amount = readBigDecimalInput(scanner);
-//
-//        System.out.print("Enter the transaction category: ");
-//        String category = scanner.nextLine();
-//
-//        System.out.print("Enter the transaction date (dd/MM/yyyy): ");
-//        String date = readDateInput(scanner);
-//
-//        System.out.print("Enter the recipient's IBAN ");
-//        String toIBAN = readDateInput(scanner);
-//
-//        scanner.close();
-//
-//
-//        return new Transaction(amount, category, date, fromIBAN, toIBAN);
-//    }
-
 
     public String getCategory() {
         return category;
     }
 
-    public BigDecimal getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public Date getDate() {
         return date;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public Long getId() {
@@ -103,19 +61,90 @@ public class Transaction {
         this.id = id;
     }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setCategory(String category) {
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+    }
+
+    public BankAccount getFrom() {
+        return from;
+    }
+
+    public void setFrom(BankAccount from) {
+        this.from = from;
+    }
+
+    public BankAccount getTo() {
+        return to;
+    }
+
+    public void setTo(BankAccount to) {
+        this.to = to;
+    }
+
     public String getFromIban() {
         return fromIban;
     }
 
-    public void setFromIban(String fromIBAN) {
-        this.fromIban = fromIBAN;
+    public void setFromIban(String fromIban) {
+        this.fromIban = fromIban;
     }
 
     public String getToIban() {
         return toIban;
     }
 
-    public void setToIban(String toIBAN) {
-        this.toIban = toIBAN;
+    public void setToIban(String toIban) {
+        this.toIban = toIban;
+    }
+
+
+    public long getCo2Emission() {
+        SortingService.Category categoryEnum = SortingService.categorize(this);
+        long co2Emission = 0;
+
+        switch (categoryEnum) {
+            case Furniture, General, DrugStores:
+                co2Emission = amount * 105;
+                break;
+            case Energy:
+                co2Emission = amount * 604;
+                break;
+            case Clothing:
+                co2Emission = amount * 1143;
+                break;
+            case Flights:
+                co2Emission = amount * 1572;
+                break;
+            case Groceries, Restaurant:
+                co2Emission = amount * 802;
+                break;
+            case PublicTransport:
+                co2Emission = amount * 83;
+                break;
+            case Trains:
+                co2Emission = amount * 14;
+                break;
+            default:
+                co2Emission = 0;
+        }
+
+        return co2Emission;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "fromIban='" + fromIban + '\'' +
+                ", toIban='" + toIban + '\'' +
+                ", amount=" + amount +
+                ", transactionDate=" + date +
+                '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.rabobank.bankapplication.repositories;
 
-
-import com.rabobank.bankapplication.models.BankAccount;
+import com.rabobank.bankapplication.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BankAccountRepository extends JpaRepository<BankAccount, String> {
-
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> getUserByEmail(String email);
 }
-
