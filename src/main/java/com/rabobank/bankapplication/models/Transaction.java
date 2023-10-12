@@ -2,8 +2,9 @@ package com.rabobank.bankapplication.models;
 
 import com.rabobank.bankapplication.services.SortingService;
 import jakarta.persistence.*;
-import java.util.Date;
-import static com.rabobank.bankapplication.services.SortingService.Category.*;
+
+import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @Entity
@@ -14,7 +15,7 @@ public class Transaction {
     @GeneratedValue
     private Long id;
     private String category;
-    private Date date;
+    private LocalDateTime date;
     @ManyToOne
     @JoinColumn(name = "from_bank_account_id")
     private BankAccount from;
@@ -25,18 +26,18 @@ public class Transaction {
 
     private String toIban;
 
-    public Transaction() {
-        this.date = new Date();
-    }
+    public Transaction(){};
 
-    public Transaction(long amount, String category, String fromIban, String toIban) {
+    public Transaction(long amount, LocalDateTime date, String fromIban, String category) {
         this.amount = amount;
-        this.category = category;
-        this.date = new Date();
+        this.date = date;
         this.fromIban = fromIban;
-        this.toIban = toIban;
+        this.category = category;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
     public String getCategory() {
         return category;
     }
@@ -49,7 +50,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
@@ -61,28 +62,13 @@ public class Transaction {
         this.id = id;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
-    public void setCategory(String category) {
-    }
-
     public void setBankAccount(BankAccount bankAccount) {
+        this.from = bankAccount;
     }
-
-    public BankAccount getFrom() {
-        return from;
-    }
-
-    public void setFrom(BankAccount from) {
-        this.from = from;
-    }
-
-    public BankAccount getTo() {
-        return to;
-    }
-
     public void setTo(BankAccount to) {
         this.to = to;
     }
@@ -93,6 +79,10 @@ public class Transaction {
 
     public void setFromIban(String fromIban) {
         this.fromIban = fromIban;
+    }
+
+    public void setFrom(BankAccount from) {
+        this.from = from;
     }
 
     public String getToIban() {

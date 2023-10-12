@@ -14,11 +14,11 @@ public class SortingService {
     }
 
     public static Category categorize(Transaction transaction) {
-        String targetAccountIban = transaction.getToIban();
+        String targetCategory = transaction.getCategory();
         HashMap<Category, List<String>> categoryMapping = getCategoriesListHashMap();
 
         return categoryMapping.entrySet().stream()
-                .filter(entry -> entry.getValue().contains(targetAccountIban.toLowerCase(Locale.ROOT)))
+                .filter(entry -> entry.getValue().contains(targetCategory.toLowerCase(Locale.ROOT)))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(Category.Other);

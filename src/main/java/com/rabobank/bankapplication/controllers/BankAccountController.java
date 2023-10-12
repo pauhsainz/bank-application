@@ -6,10 +6,7 @@ import com.rabobank.bankapplication.models.User;
 import com.rabobank.bankapplication.repositories.BankAccountRepository;
 import com.rabobank.bankapplication.utils.IBANUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,8 +22,8 @@ public class BankAccountController {
     }
 
     @PostMapping("/bank-accounts")
-    public BankAccount createBankAccount(User user, long balance, String iban) {
-        BankAccount bankAccount = new BankAccount(user, balance, iban);
+    public BankAccount createBankAccount(User user, String iban) {
+        BankAccount bankAccount = new BankAccount(user, iban);
         return bankAccountRepository.save(bankAccount);
     }
 
@@ -35,7 +32,15 @@ public class BankAccountController {
         return bankAccountRepository.findAll();
     }
     //TODO get all Bank Accounts
-
+//    @GetMapping("/accounts/{userId}")
+//    public List<BankAccount> getUserAccounts(@PathVariable Long userId) {
+//        User user = userRepository.findById(userId).orElse(null);
+//        String email = user.getEmail();
+//        if (user != null) {
+//            return bankAccountRepository.getBankAccountByEmail(email);
+//        }
+//        throw new IllegalArgumentException("No customer with such email: " + email);
+//    }
     public BankAccount updateBankAccount(BankAccount bankAccount) {
         return bankAccountRepository.save(bankAccount);
     }

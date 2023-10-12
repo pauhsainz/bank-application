@@ -21,6 +21,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<BankAccount> bankAccount;
 
+
     public User(Long id, String firstName, String lastName, String email, String password, Set<BankAccount> bankAccount) {
         this.id = id;
         this.firstName = firstName;
@@ -33,6 +34,9 @@ public class User {
     public User() {
     }
 
+    public void setBankAccount(Set<BankAccount> bankAccount) {
+        this.bankAccount = bankAccount;
+    }
     public Long getId() {
         return id;
     }
@@ -77,7 +81,4 @@ public class User {
         return bankAccount;
     }
 
-    public void setBankAccount(Set<BankAccount> bankAccount) {
-        this.bankAccount = bankAccount;
-    }
 }

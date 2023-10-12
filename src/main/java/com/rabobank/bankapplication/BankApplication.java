@@ -1,27 +1,21 @@
 package com.rabobank.bankapplication;
 
+import com.rabobank.bankapplication.models.BankAccount;
 import com.rabobank.bankapplication.models.Transaction;
 import com.rabobank.bankapplication.models.User;
 import com.rabobank.bankapplication.repositories.BankAccountRepository;
 import com.rabobank.bankapplication.repositories.TransactionRepository;
 import com.rabobank.bankapplication.repositories.UserRepository;
-import org.apache.catalina.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import com.rabobank.bankapplication.controllers.BankAccountController;
-import com.rabobank.bankapplication.models.BankAccount;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Date;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -105,9 +99,15 @@ public class BankApplication {
 		transaction2.setDate(null);
 		transactionRepository.save(transaction2);
 
-
-
-
-
 	}
+
+
+//	@GetMapping("/transactions/{toIban}")
+//	public List<Transaction> getbankAccountTransactions(@PathVariable String toIban) {
+//		BankAccount bankAccount = bankAccountRepository.getBankAccountByToIban(toIban);
+//		if (user != null) {
+//			return transactionRepository.getTransactionsByToIban();
+//		}
+//		throw new IllegalArgumentException("No customer with such email: " + email);
+//	}
 }

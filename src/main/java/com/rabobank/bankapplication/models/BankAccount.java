@@ -2,6 +2,8 @@ package com.rabobank.bankapplication.models;
 
 import jakarta.persistence.*;
 import com.rabobank.bankapplication.utils.IBANUtil;
+import lombok.*;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,9 +28,8 @@ public class BankAccount {
     public BankAccount() {
 
     }
-    public BankAccount(User user, long balance, String iban) {
+    public BankAccount(User user, String iban) {
         this.user = user;
-        this.balance = balance;
         this.iban = iban;
     }
 

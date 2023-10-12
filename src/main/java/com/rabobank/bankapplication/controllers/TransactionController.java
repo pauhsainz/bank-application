@@ -4,11 +4,11 @@ import com.rabobank.bankapplication.models.Transaction;
 import com.rabobank.bankapplication.models.User;
 import com.rabobank.bankapplication.repositories.TransactionRepository;
 import com.rabobank.bankapplication.repositories.UserRepository;
+import com.rabobank.bankapplication.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,35 +19,21 @@ import java.util.stream.Collectors;
 public class TransactionController {
     @Autowired
     private TransactionRepository transactionRepository;
-    private UserRepository userRepository;
-    public TransactionController(TransactionRepository transactionRepository, UserRepository userRepository) {
+    private UserService userService;
+    public TransactionController(TransactionRepository transactionRepository, UserService userService) {
         this.transactionRepository = transactionRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    @GetMapping(value = "/transactions")
-    public List<Transaction> getTransactions(@RequestParam String toIban) {
-        return transactionRepository.getTransactionsByFromIban(toIban);
+    @GetMapping
+    public List<Transaction> getTransactions(@RequestParam String iban) {
+        return transactionRepository.getTransactionsByFromIban(iban);
     }
 
-    public List<Transaction> getTransactionsByIban(String email, String iban) {
-        Optional<User> loggedinUser = userRepository.getUserByEmail(email);
-        if (loggedinUser.isEmpty()) {
-            throw new IllegalArgumentException("No customer with such email: " + email);
-        }
-        boolean bankAccountOwner = loggedinUser.get().getBankAccount().stream().anyMatch(bankAccount -> iban.equals(bankAccount.getIban()));
-        if (!bankAccountOwner) {
-            throw new IllegalStateException("Current user does not have bank account with such IBAN:" + iban);
-        }
-        return transactionRepository
-                .findAll()
-                .stream()
-                .filter(transaction -> transaction.getFromIban().equals(iban))
-                .collect(Collectors.toList());
-    }
+
     @PostMapping
     public Transaction createTransaction(@RequestBody Transaction transaction) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         transaction.setDate(now);
         transaction.setId(null);
         return transactionRepository.save(transaction);
