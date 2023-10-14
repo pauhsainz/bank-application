@@ -1,8 +1,9 @@
 package com.rabobank.bankapplication.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,8 +27,5 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    private Set<BankAccount> bankAccount;
-
-    public User() {
-    }
+    private Set<BankAccount> bankAccounts = new HashSet<>();
 }

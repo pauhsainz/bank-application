@@ -14,7 +14,7 @@ public class SortingService {
     }
 
     public static Category categorize(Transaction transaction) {
-        String targetCategory = transaction.getCategory();
+        String targetCategory = transaction.getDescription();
         HashMap<Category, List<String>> categoryMapping = getCategoriesListHashMap();
 
         return categoryMapping.entrySet().stream()

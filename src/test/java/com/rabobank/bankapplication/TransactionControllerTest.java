@@ -13,7 +13,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -34,25 +35,27 @@ public class TransactionControllerTest {
     @MockBean
     TransactionRepository transactionRepository;
 
+    private Transaction createTransaction(long amount, String fromIban, String category) {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setFromIban(fromIban);
+        transaction.setDescription(category);
+        transaction.setDate(LocalDateTime.now());
+
+        return transaction;
+    }
     @Test
     @WithMockUser(username = "test@test.com")
     public void getTransactions() throws Exception {
-        when(transactionRepository.getTransactionsByFromIban("NL01436456457577"))
-                .thenReturn(Arrays.asList(
-                        new Transaction(45L,LocalDateTime.now(), "NL01436456457577", "HM"),
-                        new Transaction(200L, LocalDateTime.now(), "NL01436456457577", "wizzair")
-                ));
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(createTransaction(45L, "NL01436456457577", "HM"));
+        transactions.add(createTransaction(200L, "NL01436456457577", "wizzair"));
+
+        when(transactionRepository.getTransactionsByFromIban("NL01436456457577")).thenReturn(transactions);
 
         mockMvc.perform(get("/transactions").param("iban", "NL01436456457577"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(2)))
                 .andExpect(jsonPath("$[0].fromIban", is("NL01436456457577")));
     }
-
-
-    @Test
-    public void postTransactions() throws Exception {
-
-    }
-
 }
