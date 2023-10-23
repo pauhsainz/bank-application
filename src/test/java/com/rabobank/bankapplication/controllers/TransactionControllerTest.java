@@ -1,5 +1,6 @@
-package com.rabobank.bankapplication;
+package com.rabobank.bankapplication.controllers;
 
+import com.rabobank.bankapplication.BankApplication;
 import com.rabobank.bankapplication.models.Transaction;
 import com.rabobank.bankapplication.repositories.TransactionRepository;
 import org.junit.jupiter.api.Test;
@@ -35,11 +36,11 @@ public class TransactionControllerTest {
     @MockBean
     TransactionRepository transactionRepository;
 
-    private Transaction createTransaction(long amount, String fromIban, String category) {
+    private Transaction createTransaction(long amount, String fromIban, String description) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setFromIban(fromIban);
-        transaction.setDescription(category);
+        transaction.setDescription(description);
         transaction.setDate(LocalDateTime.now());
 
         return transaction;
@@ -53,7 +54,7 @@ public class TransactionControllerTest {
 
         when(transactionRepository.getTransactionsByFromIban("NL01436456457577")).thenReturn(transactions);
 
-        mockMvc.perform(get("/transactions").param("iban", "NL01436456457577"))
+        mockMvc.perform(get("/api/transactions").param("iban", "NL01436456457577"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(2)))
                 .andExpect(jsonPath("$[0].fromIban", is("NL01436456457577")));

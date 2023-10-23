@@ -12,16 +12,8 @@ import java.time.LocalDateTime;
         private Long id;
         private long amount;
         private String description;
+        private Enum category;
         private LocalDateTime date;
-
-        @ManyToOne
-        @JoinColumn(name = "from_bank_account_id")
-        private BankAccount from;
-
-        @ManyToOne
-        @JoinColumn(name = "to_bank_account_id")
-        private BankAccount to;
-
         private String fromIban;
         private String toIban;
 

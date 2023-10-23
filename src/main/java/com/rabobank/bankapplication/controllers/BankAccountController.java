@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bank-accounts")
+@RequestMapping("/api/bank-accounts")
 public class BankAccountController {
 
     @Autowired
@@ -20,7 +20,7 @@ public class BankAccountController {
         this.bankAccountService = bankAccountService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public BankAccount createBankAccount() {
         String generatedIban = IBANUtil.generateIBAN();
         BankAccount newBankAccount = new BankAccount();
@@ -28,13 +28,17 @@ public class BankAccountController {
         return bankAccountService.createBankAccount(newBankAccount);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<BankAccount> getAllBankAccounts() {
         return bankAccountService.getAllBankAccounts();
     }
 
     @GetMapping("/{iban}")
-    public BankAccount getBankAccount(@PathVariable String iban) {
+    public BankAccount getBankAccountByIban(@PathVariable String iban) {
         return bankAccountService.getBankAccountByIban(iban);
+    }
+    @GetMapping("/{user}")
+    public BankAccount getBankAccountByUser(@PathVariable String user) {
+        return bankAccountService.getBankAccountByIban(user);
     }
 }

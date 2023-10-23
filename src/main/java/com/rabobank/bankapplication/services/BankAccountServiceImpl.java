@@ -3,6 +3,7 @@ package com.rabobank.bankapplication.services;
 import com.rabobank.bankapplication.models.BankAccount;
 import com.rabobank.bankapplication.models.Transaction;
 import com.rabobank.bankapplication.repositories.BankAccountRepository;
+import com.rabobank.bankapplication.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import java.util.List;
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
 
     @Autowired
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository) {
+    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, TransactionRepository transactionRepository) {
         this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -37,21 +40,16 @@ public class BankAccountServiceImpl implements BankAccountService {
     public double calculateBalance(String iban) {
         BankAccount bankAccount = bankAccountRepository.findById(iban)
                 .orElseThrow(() -> new IllegalArgumentException("Bank Account not found with IBAN: " + iban));
-
-        // Calculate the balance based on transactions
-        List<Transaction> transactions = bankAccount.getAllTransactions();
+        List<Transaction> outgoingTransactions = transactionRepository.getTransactionsByFromIban(iban);
+        List<Transaction> incomingTransactions = transactionRepository.getTransactionsByToIban(iban);
         double balance = bankAccount.getBalance();
 
-        for (Transaction transaction : transactions) {
-            if (transaction.getFromIban().equals(iban)) {
-                // Subtract the amount from the balance if it's an outgoing transaction
-                balance -= transaction.getAmount();
-            } else if (transaction.getToIban().equals(iban)) {
-                // Add the amount to the balance if it's an incoming transaction
-                balance += transaction.getAmount();
-            }
+        for (Transaction outgoingTransaction : outgoingTransactions) {
+            balance -= outgoingTransaction.getAmount();
         }
-
+        for (Transaction incomingTransaction : incomingTransactions) {
+            balance += incomingTransaction.getAmount();
+        }
         return balance;
     }
 }

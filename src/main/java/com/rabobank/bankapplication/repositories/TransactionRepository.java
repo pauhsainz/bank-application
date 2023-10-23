@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> getTransactionsByFromIban(String fromIban);
+    List<Transaction> getTransactionsByFromIban(String toIban);
+    List<Transaction> getTransactionsByToIban(String fromIban);
     List<Transaction> getTransactionsByDescription(String description);
 }

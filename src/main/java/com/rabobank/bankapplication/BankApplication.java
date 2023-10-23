@@ -6,6 +6,7 @@ import com.rabobank.bankapplication.models.User;
 import com.rabobank.bankapplication.repositories.BankAccountRepository;
 import com.rabobank.bankapplication.repositories.TransactionRepository;
 import com.rabobank.bankapplication.repositories.UserRepository;
+import com.rabobank.bankapplication.services.SortingService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -40,15 +42,7 @@ public class BankApplication {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-//	@Bean(initMethod = "start", destroyMethod = "stop")
-//	public Server h2Server() throws SQLException {
-//		return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
-//	}
 
-	// TODO Try running ASAP and using postman to check whether 'CRUD' calls work
-	// TODO Finish database
-	// TODO Make sure balance, username, category re-labelling works
-	// TODO Connect front end
 	// TODO JAVADOCS -- Look into other people's javadocs to learn about conventions and best practices
 	// TODO look into publishing the javadocs (method to create html file out of them) (banking-application.adoc)
 	// TODO javadocs not just for methods but for classes as well -- what is the use? where is it needed? etc
@@ -82,32 +76,21 @@ public class BankApplication {
 		bankAccountRepository.save(joeAccount);
 
 		Transaction transaction1 = new Transaction();
-		transaction1.setFrom(janeAccount);
 		transaction1.setFromIban(janeAccount.getIban());
-		transaction1.setTo(joeAccount);
 		transaction1.setToIban(joeAccount.getIban());
 		transaction1.setAmount(100);
-		transaction1.setDate(null);
+		transaction1.setDate(LocalDateTime.now());
+		transaction1.setDescription("Wizz Air");
+		transaction1.setCategory(SortingService.categorize(transaction1));
 		transactionRepository.save(transaction1);
 
 		Transaction transaction2 = new Transaction();
-		transaction2.setFrom(joeAccount);
 		transaction2.setFromIban(joeAccount.getIban());
-		transaction2.setTo(joeAccount);
 		transaction2.setToIban(joeAccount.getIban());
 		transaction2.setAmount(100);
 		transaction2.setDate(null);
+//		transaction2.setDescription("vintageisland");
 		transactionRepository.save(transaction2);
 
 	}
-
-
-//	@GetMapping("/transactions/{toIban}")
-//	public List<Transaction> getbankAccountTransactions(@PathVariable String toIban) {
-//		BankAccount bankAccount = bankAccountRepository.getBankAccountByToIban(toIban);
-//		if (user != null) {
-//			return transactionRepository.getTransactionsByToIban();
-//		}
-//		throw new IllegalArgumentException("No customer with such email: " + email);
-//	}
 }

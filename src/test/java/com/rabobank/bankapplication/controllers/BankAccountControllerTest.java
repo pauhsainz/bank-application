@@ -1,4 +1,4 @@
-package com.rabobank.bankapplication;
+package com.rabobank.bankapplication.controllers;
 
 import org.springframework.test.web.servlet.ResultActions;
 import com.rabobank.bankapplication.controllers.BankAccountController;

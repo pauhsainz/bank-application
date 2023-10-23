@@ -15,10 +15,15 @@ public class SortingService {
 
     public static Category categorize(Transaction transaction) {
         String targetCategory = transaction.getDescription();
+        if (targetCategory == null){
+            return Category.Other;
+        }
+        targetCategory = targetCategory.trim().replaceAll("\\s+", "");
         HashMap<Category, List<String>> categoryMapping = getCategoriesListHashMap();
 
+        String finalTargetCategory = targetCategory;
         return categoryMapping.entrySet().stream()
-                .filter(entry -> entry.getValue().contains(targetCategory.toLowerCase(Locale.ROOT)))
+                .filter(entry -> entry.getValue().contains(finalTargetCategory.toLowerCase(Locale.ROOT)))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(Category.Other);

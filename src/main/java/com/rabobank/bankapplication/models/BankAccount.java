@@ -1,11 +1,7 @@
 package com.rabobank.bankapplication.models;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import lombok.Data;
 
 @Entity
 @Data
@@ -15,21 +11,8 @@ public class BankAccount {
     private long balance;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToMany(mappedBy = "from")
-    private List<Transaction> outgoingTransactions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "to")
-    private List<Transaction> incomingTransactions = new ArrayList<>();
-    @Transient
-    public List<Transaction> getAllTransactions() {
-        List<Transaction> transactionArrayList = new ArrayList<>();
-        transactionArrayList.addAll(incomingTransactions);
-        transactionArrayList.addAll(outgoingTransactions);
-        transactionArrayList.sort(Comparator.comparing(Transaction::getDate));
-        return transactionArrayList;
-    }
-
+//ADD HERE 'Create a method that extracts the email field from the associated User' //Send that field to BAController
 
 }

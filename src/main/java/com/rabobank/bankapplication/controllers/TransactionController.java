@@ -5,10 +5,12 @@ import com.rabobank.bankapplication.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/transactions") // Use "api" to distinguish RESTful endpoints
 public class TransactionController {
 
     @Autowired
@@ -18,14 +20,18 @@ public class TransactionController {
     public TransactionController(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
-
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // Use "id" as a variable
     public Transaction getTransaction(@PathVariable Long id) {
         return transactionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found with ID: " + id));
     }
+    @GetMapping(value = "/all/{iban}")
+    public List<Transaction> getTransactionsByIban(@PathVariable String iban) {
+        return transactionRepository.getTransactionsByFromIban(iban);
+    }
 
-    @PostMapping("/{id}")
+
+    @PostMapping("/create") // Use "create" to specify the action
     public Transaction createTransaction(@RequestBody Transaction transaction) {
         // Set the current date and time when creating the transaction
         LocalDateTime now = LocalDateTime.now();
@@ -34,7 +40,7 @@ public class TransactionController {
         return transactionRepository.save(transaction);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}") // Use "update" and "id" as variables
     public Transaction updateTransaction(@PathVariable Long id, @RequestBody Transaction updatedTransaction) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found with ID: " + id));
@@ -43,4 +49,3 @@ public class TransactionController {
         return transactionRepository.save(transaction);
     }
 }
-
